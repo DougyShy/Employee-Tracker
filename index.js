@@ -1,8 +1,16 @@
-const inquirer = require('inquirer');
-const fs = require('fs');
+const { prompt } = require('inquirer');
+const { Pool } = require('pg');
 
-inquirer
-    .prompt([
+// Connect to database
+const pool = new Pool ({
+    host: "localhost",
+    user: "postgres",
+    password: "fossil69",
+    database: "business_db",
+    port: process.env.PORT || 5432
+});
+
+prompt([
         {
             type: 'list',
             name: 'menu_choice',
@@ -14,7 +22,7 @@ inquirer
         switch(answers.menu_choice) {
             case 'View all departments':
                 console.log(answers.menu_choice);
-                break;
+                break;             
             case 'View all roles':
                 console.log(answers.menu_choice);
                 break;  

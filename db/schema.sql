@@ -3,6 +3,22 @@ CREATE DATABASE business_db;
 
 \c business_db;
 
+
+CREATE TABLE department (
+    id INT PRIMARY KEY,
+    name VARCHAR(30)
+);
+
+CREATE TABLE role (
+    id INT PRIMARY KEY, 
+    title VARCHAR(30),
+    salary DECIMAL,
+    department_id INT,
+    FOREIGN KEY (department_id)
+    REFERENCES department(id)
+    ON DELETE SET NULL
+);
+
 CREATE TABLE employee (
     id INT PRIMARY KEY,
     first_name VARCHAR(30),
@@ -12,19 +28,4 @@ CREATE TABLE employee (
     FOREIGN KEY (role_id)
     REFERENCES role(id)
     ON DELETE SET NULL
-);
-
-CREATE TABLE role (
-    id INT PRIMARY KEY, 
-    title VARCHAR(30),
-    salary DECIMAL,
-    department_id INT,
-    FOREIGN KEY (department_id),
-    REFERENCES department(id),
-    ON DELETE SET NULL
-);
-
-CREATE TABLE department (
-    id INT PRIMARY KEY,
-    name VARCHAR(30)
 );
