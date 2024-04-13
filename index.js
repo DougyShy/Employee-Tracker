@@ -10,6 +10,15 @@ const pool = new Pool ({
     port: process.env.PORT || 5432
 });
 
+const displayAll = async function (data) {
+    console.log(data);
+    data.forEach(element => {
+        console.log(typeof(element));
+    });
+}
+
+pool.connect();
+
 prompt([
         {
             type: 'list',
@@ -22,6 +31,9 @@ prompt([
         switch(answers.menu_choice) {
             case 'View all departments':
                 console.log(answers.menu_choice);
+                pool.query('select * from department', (err, res) => {
+                    displayAll(res.rows);
+                })
                 break;             
             case 'View all roles':
                 console.log(answers.menu_choice);
