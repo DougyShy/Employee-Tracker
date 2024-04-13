@@ -10,13 +10,6 @@ const pool = new Pool ({
     port: process.env.PORT || 5432
 });
 
-const displayAll = async function (data) {
-    console.log(data);
-    data.forEach(element => {
-        console.log(typeof(element));
-    });
-}
-
 pool.connect();
 
 prompt([
@@ -32,14 +25,21 @@ prompt([
             case 'View all departments':
                 console.log(answers.menu_choice);
                 pool.query('select * from department', (err, res) => {
-                    displayAll(res.rows);
+                    console.table(res.rows);
                 })
                 break;             
             case 'View all roles':
                 console.log(answers.menu_choice);
+                pool.query('select * from role', (err, res) => {
+                    console.table(res.rows);
+                })
                 break;  
             case 'View all employees':
                 console.log(answers.menu_choice);
+                pool.query('select * from employee', (err, res) => {
+                    console.table(res.rows);
+                })
+                break;
             case 'Add a department':
                 console.log(answers.menu_choice);
                 break;
