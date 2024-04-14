@@ -10,5 +10,4 @@ VALUES (1234, 'Area Manager', 50000.00, 311),
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES (1, 'Clinton', 'Scheible', 1234, 555),
-       (2, 'Billy', 'Hossness', 5678, 1369); 
-    
+       (2, 'Billy', 'Hossness', 5678, 1369);
