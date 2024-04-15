@@ -2,6 +2,9 @@ const { prompt } = require('inquirer');
 const { Pool } = require('pg');
 const uuid = require('./helpers/uuid');
 
+var departmentList = [];
+var roleList = [];
+
 // Connect to database
 const pool = new Pool ({
     host: "localhost",
@@ -11,12 +14,54 @@ const pool = new Pool ({
     port: process.env.PORT || 5432
 });
 
-let quit = false;
-
 pool.connect();
 
+async function loadDepartmentList() {
+    const client = await pool.connect();
+    try {
+        let result = await client.query(`SELECT * FROM department`);
+        let departments = result.rows;
+        departments.forEach((element) => departmentList.push(JSON.parse(JSON.stringify(element))));
+    } finally {
+        client.release();
+    }
+};
+
+async function loadRoleList() {
+    const client = await pool.connect();
+    try {
+        let result = await client.query(`SELECT * FROM role`);
+        let roles = result.rows;
+        roles.forEach((element) => roleList.push(JSON.parse(JSON.stringify(element.title))));
+    } finally {
+        client.release();
+    }
+};
+
+const getDeptId = function (deptName) {
+    let deptId;
+    departmentList.forEach((element) => {(element.name == deptName) ? deptId = element.id : false});
+    return deptId;
+}
+
+const getRoleId = function (roleTitle) {
+    let roleId;
+    roleList.forEach((element) => {(element.title == roleTitle) ? roleId = element.id : false});
+    //console.log(roleId);
+    return roleId;
+}
+
+//loadDepartmentList();
+//loadRoleList();
+
 async function trackEmployees() {
-    return prompt([
+        await loadDepartmentList();
+        await loadRoleList();
+
+        getRoleId('Area Manager');
+        //console.log(roleList.title);
+
+        return prompt([
             {
                 type: 'list',
                 name: 'menu_choice',
@@ -28,15 +73,14 @@ async function trackEmployees() {
             switch(answers.menu_choice) {
                 case 'View all departments':
                     console.log(answers.menu_choice);
-                    pool.query('select * from department', (err, res) => {
+                    pool.query('SELECT * FROM department', (err, res) => {
                         console.table(res.rows);
                         trackEmployees();
-                        //console.table(res.rows, { column: false });
                     })
                     break;            
                 case 'View all roles':
                     console.log(answers.menu_choice);
-                    pool.query('select * from role', (err, res) => {
+                    pool.query('SELECT * FROM role', (err, res) => {
                         console.table(res.rows);
                         trackEmployees();
                     })
@@ -58,19 +102,67 @@ async function trackEmployees() {
                         }
                     ])
                     .then(answers => {
-                        //pool.query('INSERT INTO department (id, name) VALUES(' + '88888' + ', ' + answer.newDeptName + ')');
                         console.log(answers.newDeptName);
                         pool.query("INSERT INTO department (id, name) VALUES (" + uuid() + ", '" + answers.newDeptName + "')", (err, res) => {
-                            console.log('New Department added: ' + answers.newDeptName);
+                            console.log('New Department added: ' + answers.newDeptName);     
                             trackEmployees();
                         });
                      });
                     break;
                 case 'Add a role':
                     console.log(answers.menu_choice);
+                    prompt([
+                        {
+                            type: 'input',
+                            name: 'roleTitle',
+                            message: 'What is the title of this new role?'     
+                        },
+                        {
+                            type: 'input',
+                            name: 'roleSalary',
+                            message: 'What is the salary for this role?' 
+                        },
+                        {
+                            type: 'list',
+                            name: 'departmentName',
+                            message: "What department would you like to add this role to?",
+                            choices: departmentList,
+                        }
+                    ])
+                    .then(answers => {
+                        // get foreign key with department name
+                        let dept_id = getDeptId(answers.departmentName);
+
+                        console.log(dept_id);
+                        pool.query(("INSERT INTO role (id, title, salary, department_id) VALUES (" + uuid() + ", '" + answers.roleTitle + "', " + answers.roleSalary + ", " + dept_id + ")"), (err, res) => {
+                            console.log('New role added to ' + answers.deptName + ": " + answers.roleTitle);
+                            if (err) {
+                                console.log(err);
+                            };
+                            trackEmployees();
+                        });
+                    })
                     break;  
                 case 'Add an employee':
                     console.log(answers.menu_choice);
+                    prompt([
+                        {
+                            type: 'input',
+                            name: 'employeeFirstName',
+                            message: 'What is the first name of the new employee?'     
+                        },
+                        {
+                            type: 'input',
+                            name: 'employeeLastName',
+                            message: 'What is the last name of the new employee?' 
+                        },
+                        {
+                            type: 'list',
+                            name: 'roleName',
+                            message: "What role will be assigned to this new employee?",
+                            choices: roleList,
+                        }
+                    ])
                     break;
                 case 'Update an employee role':
                     console.log(answers.menu_choice);
@@ -82,4 +174,4 @@ async function trackEmployees() {
         });
 };
 
-console.log(trackEmployees());
+trackEmployees();
