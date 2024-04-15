@@ -17,22 +17,27 @@ const pool = new Pool ({
 pool.connect();
 
 async function loadDepartmentList() {
+    departmentList = [];
     const client = await pool.connect();
     try {
         let result = await client.query(`SELECT * FROM department`);
         let departments = result.rows;
         departments.forEach((element) => departmentList.push(JSON.parse(JSON.stringify(element))));
+        console.log(departmentList)
     } finally {
-        client.release();
+        client.release(departmentList);
     }
 };
 
 async function loadRoleList() {
+    roleList = [];
     const client = await pool.connect();
     try {
-        let result = await client.query(`SELECT * FROM role`);
+        let result = await client.query(`SELECT id, title AS name FROM role`);
         let roles = result.rows;
-        roles.forEach((element) => roleList.push(JSON.parse(JSON.stringify(element.title))));
+        console.log(result.rows);
+        roles.forEach((element) => roleList.push(JSON.parse(JSON.stringify(element))));
+        console.log("ROLE LIST COMING:");
     } finally {
         client.release();
     }
@@ -50,9 +55,6 @@ const getRoleId = function (roleTitle) {
     //console.log(roleId);
     return roleId;
 }
-
-//loadDepartmentList();
-//loadRoleList();
 
 async function trackEmployees() {
         await loadDepartmentList();
@@ -160,6 +162,7 @@ async function trackEmployees() {
                             type: 'list',
                             name: 'roleName',
                             message: "What role will be assigned to this new employee?",
+                            //choices: roleList,
                             choices: roleList,
                         }
                     ])
