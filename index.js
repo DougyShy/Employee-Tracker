@@ -69,7 +69,6 @@ const getRoleId = function (roleTitle) {
 const getEmployeeId = function (employeeName) {
     let employeeId;
     employeeList.forEach((element) => {(element.name == employeeName) ? employeeId = element.id : false});
-    console.log('EMPLOYEE ID: ' + employeeId);
     return employeeId;
 };
 
@@ -227,7 +226,7 @@ async function trackEmployees() {
                     break;
                 case 'Quit':
                     console.log("Quitting...");
-                    // Want to simple exit program/app here
+                    // Want to simpley exit program/app here - Thank You Jason for the quick help on this
                     process.exit();
                 default:
                     console.log("Error may have occurred");
