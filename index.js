@@ -4,6 +4,7 @@ const uuid = require('./helpers/uuid');
 
 var departmentList = [];
 var roleList = [];
+var employeeList = [];
 quitProgram = false;
 
 // Connect to database
@@ -41,29 +42,46 @@ async function loadRoleList() {
     }
 };
 
+async function loadEmployeeList() {
+    employeeList = [];
+    const client = await pool.connect();
+    try {
+        let result = await client.query(`SELECT id, CONCAT (first_name, ' ', last_name) AS name FROM employee`);
+        let employees = result.rows;
+        employees.forEach((element) => employeeList.push(JSON.parse(JSON.stringify(element))));
+    } finally {
+        client.release();
+    }
+};
+
 const getDeptId = function (deptName) {
     let deptId;
     departmentList.forEach((element) => {(element.name == deptName) ? deptId = element.id : false});
     return deptId;
-}
+};
 
 const getRoleId = function (roleTitle) {
     let roleId;
     roleList.forEach((element) => {(element.name == roleTitle) ? roleId = element.id : false});
     return roleId;
-}
+};
 
-function exit () {
-    ui.close();
-}
+const getEmployeeId = function (employeeName) {
+    let employeeId;
+    employeeList.forEach((element) => {(element.name == employeeName) ? employeeId = element.id : false});
+    console.log('EMPLOYEE ID: ' + employeeId);
+    return employeeId;
+};
 
+// main program here
 async function trackEmployees() {
         await loadDepartmentList();
         await loadRoleList();
+        await loadEmployeeList();
 
         getRoleId('Area Manager');
-        //console.log(roleList.title);
 
+        // Options for user employee management
         return prompt([
             {
                 type: 'list',
@@ -180,6 +198,32 @@ async function trackEmployees() {
                     break;
                 case 'Update an employee role':
                     console.log(answers.menu_choice);
+                    prompt ([
+                        {
+                            type: 'list',
+                            name: 'employeeToChange',
+                            message: "Which employee's role would you like to change?",
+                            choices: employeeList,
+                        },
+                        {
+                            type: 'list',
+                            name: 'roleToChangeTo',
+                            message: "what new role would you like to assign to this employee?",
+                            choices: roleList,
+                        }
+                    ])
+                    .then (answers => {
+                        let emp_id = getEmployeeId(answers.employeeToChange);
+                        let role_id = getRoleId(answers.roleToChangeTo);
+
+                        pool.query(("UPDATE employee SET role_id = " + role_id + " WHERE id = " + emp_id), (err, res) => {
+                            console.log(answers.employeeToChange + "'s role has been updated to: " + answers.roleToChangeTo);
+                            if (err) {
+                                console.log(err);
+                            };
+                            trackEmployees();
+                        })
+                    })
                     break;
                 case 'Quit':
                     console.log("Quitting...");
