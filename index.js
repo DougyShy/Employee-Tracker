@@ -208,7 +208,7 @@ async function trackEmployees() {
                         {
                             type: 'list',
                             name: 'roleToChangeTo',
-                            message: "what new role would you like to assign to this employee?",
+                            message: "What new role would you like to assign to this employee?",
                             choices: roleList,
                         }
                     ])
