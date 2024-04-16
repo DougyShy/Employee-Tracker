@@ -4,6 +4,7 @@ const uuid = require('./helpers/uuid');
 
 var departmentList = [];
 var roleList = [];
+quitProgram = false;
 
 // Connect to database
 const pool = new Pool ({
@@ -23,7 +24,6 @@ async function loadDepartmentList() {
         let result = await client.query(`SELECT * FROM department`);
         let departments = result.rows;
         departments.forEach((element) => departmentList.push(JSON.parse(JSON.stringify(element))));
-        console.log(departmentList)
     } finally {
         client.release(departmentList);
     }
@@ -35,9 +35,7 @@ async function loadRoleList() {
     try {
         let result = await client.query(`SELECT id, title AS name FROM role`);
         let roles = result.rows;
-        console.log(result.rows);
         roles.forEach((element) => roleList.push(JSON.parse(JSON.stringify(element))));
-        console.log("ROLE LIST COMING:");
     } finally {
         client.release();
     }
@@ -51,9 +49,12 @@ const getDeptId = function (deptName) {
 
 const getRoleId = function (roleTitle) {
     let roleId;
-    roleList.forEach((element) => {(element.title == roleTitle) ? roleId = element.id : false});
-    //console.log(roleId);
+    roleList.forEach((element) => {(element.name == roleTitle) ? roleId = element.id : false});
     return roleId;
+}
+
+function exit () {
+    ui.close();
 }
 
 async function trackEmployees() {
@@ -68,7 +69,7 @@ async function trackEmployees() {
                 type: 'list',
                 name: 'menu_choice',
                 message: 'How would you like to manage the company database today?',
-                choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],  
+                choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit'],  
             },          
         ])
         .then(answers => {
@@ -135,9 +136,8 @@ async function trackEmployees() {
                         // get foreign key with department name
                         let dept_id = getDeptId(answers.departmentName);
 
-                        console.log(dept_id);
                         pool.query(("INSERT INTO role (id, title, salary, department_id) VALUES (" + uuid() + ", '" + answers.roleTitle + "', " + answers.roleSalary + ", " + dept_id + ")"), (err, res) => {
-                            console.log('New role added to ' + answers.deptName + ": " + answers.roleTitle);
+                            console.log('New role added to ' + answers.departmentName + ": " + answers.roleTitle);
                             if (err) {
                                 console.log(err);
                             };
@@ -162,14 +162,29 @@ async function trackEmployees() {
                             type: 'list',
                             name: 'roleName',
                             message: "What role will be assigned to this new employee?",
-                            //choices: roleList,
                             choices: roleList,
                         }
                     ])
+                    .then(answers => {
+                        // get foreign key with role name
+                        let role_id = getRoleId(answers.roleName);
+
+                        pool.query(("INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (" + uuid() + ", '" + answers.employeeFirstName + "', '" + answers.employeeLastName + "', " + role_id + ", " + uuid() + ")"), (err, res) => {
+                            console.log('New employee added with role: ' + answers.roleName + ": " + answers.employeeFirstName + " " + answers.employeeLastName)
+                            if (err) {
+                                console.log(err);
+                            };
+                            trackEmployees();
+                        });
+                    });
                     break;
                 case 'Update an employee role':
                     console.log(answers.menu_choice);
                     break;
+                case 'Quit':
+                    console.log("Quitting...");
+                    // Want to simple exit program/app here
+                    process.exit();
                 default:
                     console.log("Error may have occurred");
                     break;  
