@@ -3,7 +3,6 @@ CREATE DATABASE business_db;
 
 \c business_db;
 
-
 CREATE TABLE department (
     id INT PRIMARY KEY,
     name VARCHAR(30)

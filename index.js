@@ -187,7 +187,7 @@ async function trackEmployees() {
                         let role_id = getRoleId(answers.roleName);
 
                         pool.query(("INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (" + uuid() + ", '" + answers.employeeFirstName + "', '" + answers.employeeLastName + "', " + role_id + ", " + uuid() + ")"), (err, res) => {
-                            console.log('New employee added with role: ' + answers.roleName + ": " + answers.employeeFirstName + " " + answers.employeeLastName)
+                            console.log('New employee (' + answers.employeeFirstName + ' ' + answers.employeeLastName + ') added with role: ' + answers.roleName)
                             if (err) {
                                 console.log(err);
                             };

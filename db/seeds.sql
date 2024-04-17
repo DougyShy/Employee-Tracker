@@ -1,13 +1,12 @@
 INSERT INTO department (id, name)
-VALUES (311, 'Sales'),
-       (777, 'Personnel Administration'),
-       (888, 'Inventory'),
-       (999, 'Deliveries');
+VALUES (31134, 'Sales'),
+       (75698, 'Personnel Administration'),
+       (58624, 'Inventory');
 
 INSERT INTO role (id, title, salary, department_id)
-VALUES (1234, 'Area Manager', 50000.00, 311),
-       (5678, 'Store Manager', 40000.00, 777);
+VALUES (12345, 'Area Manager', 75000.00, 31134),
+       (56789, 'Store Manager', 40000.00, 75698);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-VALUES (1, 'Clinton', 'Scheible', 1234, 555),
-       (2, 'Billy', 'Hossness', 5678, 1369);
+VALUES (42695, 'Clinton', 'Scheible', 12345, 37615),
+       (78294, 'Billy', 'Hossness', 56789, 13699);
