@@ -35,7 +35,7 @@ No installation is necessary for this project. Dependencies are listed below.
  - (FUTURE DEV) - Many other options can be added to further access/add/remove/update
  - (FUTURE DEV) - This is little to no error control implemented at this point with respect to user input
 
-Here is a link to the web applicatoin: https://www.loom.com/share/4fb9c0aac8864ccf9423b740994e1a15?sid=4680feae-3dd1-40ed-b771-93bd7d6b47db
+Here is a link to a quick walkthrough of the application: https://www.loom.com/share/4fb9c0aac8864ccf9423b740994e1a15?sid=4680feae-3dd1-40ed-b771-93bd7d6b47db
 
 ## License
 
