@@ -35,7 +35,7 @@ No installation is necessary for this project. Dependencies are listed below.
  - (FUTURE DEV) - Many other options can be added to further access/add/remove/update
  - (FUTURE DEV) - This is little to no error control implemented at this point with respect to user input
 
-Here is a link to the web applicatoin: https://dougs-note-taker-536625da70b2.herokuapp.com/
+Here is a link to the web applicatoin: https://www.loom.com/share/4fb9c0aac8864ccf9423b740994e1a15?sid=4680feae-3dd1-40ed-b771-93bd7d6b47db
 
 ## License
 
@@ -53,7 +53,7 @@ Clinton Scheible
 
 GitHub Profile: https://github.com/DougyShy
 
-GitHub Project Link: https://github.com/DougyShy/Note-Taker
+GitHub Project Link: https://github.com/DougyShy/Employee-Tracker
 
 E-mail: doug_scheible@yahoo.com
 
